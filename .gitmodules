@@ -1,3 +1,4 @@
 [submodule "buddy"]
 	path = buddy
-	url = git@github.com:jipson7/buddy.git
+    url = git@github.com:jipson7/buddy.git
+    ignore = dirty
