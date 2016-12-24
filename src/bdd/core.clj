@@ -1,7 +1,12 @@
-(ns bdd.core
+(ns bdd.core 
+  (:require [bdd.buckets :as buckets]
+            [bdd.colours :as colours])
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (do 
+    (buckets/run) 
+    (colours/run)))
+
+
