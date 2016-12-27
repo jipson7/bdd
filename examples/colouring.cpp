@@ -40,11 +40,11 @@ int main() {
     bdd constraint = bddtrue;
 
 	for(auto i = graph.begin(); i != graph.end(); ++i) {
-		int edge = i->first;
+		int vertex = i->first;
 		vector<int> neighbours = i->second;
 
         for (auto & n: neighbours) {
-            constraint &= (colours[edge] != colours[n]);
+            constraint &= (colours[vertex] != colours[n]);
         }
 	}
 
