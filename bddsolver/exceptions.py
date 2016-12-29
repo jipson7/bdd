@@ -1,0 +1,2 @@
+class BDDException(Exception):
+    pass
