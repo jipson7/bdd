@@ -1,6 +1,9 @@
+from . import exceptions as ex
+from . import constraints as co
+
 class Generator:
 
-    blocks = {}
+    blocks = []
     constraints = []
 
     def __init__(self, blocks=None, \
@@ -13,14 +16,17 @@ class Generator:
 
     def set_blocks(self, blocks):
         if type(blocks) == list:
-            self.blocks = self._create_keys_(blocks)
-        elif type(blocks) == dict:
+            self.__add_keys(blocks)
             self.blocks = blocks
         else:
-            raise BDDException("Invalid blocks set")
+            raise ex.BDDGenerateException("Invalid blocks set")
 
-    def _create_keys_(self, blocks):
-        return {i: blocks[i] for i in range(len(blocks))}
+    def __add_keys(self, blocks):
+        for i, block in enumerate(blocks):
+            block.set_index(i)
+
+    def add_constraint(self, op, b1=None, b2=None):
+        pass
 
     def create(self):
         data = {
@@ -42,11 +48,24 @@ class Generator:
 class Block:
 
     potential_vals = []
+    length = 0
+    index = None
 
     def __init__(self, val):
         if type(val) == int:
             self.potential_vals = [x for x in range(val)]
+            self.length = len(self.potential_vals)
         elif type(val) == list:
             self.potential_vals = val
+            self.length = len(val)
         else:
-            raise BDDException("Invalid block type.")
+            raise ex.BDDGenerateException("Invalid block type.")
+
+    def set_index(self, i):
+       self.index = i
+
+    def get_index(self):
+        return self.index
+
+    def __len__(self):
+        return self.length

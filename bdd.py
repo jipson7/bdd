@@ -13,5 +13,10 @@ for x in range(vertices):
     blocks.append(Block(colours))
 
 bdd = Generator(blocks)
-bdd.create()
+
+print(blocks[2].get_index())
+
+#bdd.add_constraint()
+
+#bdd.create()
 
