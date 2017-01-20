@@ -3,20 +3,21 @@ from bddsolver import Generator, Block
 colours = 4
 vertices = 4
 
-from itertools import combinations
-edges = [set(x) for x in combinations(range(vertices), 2)]
+
+# Used for colour map prototype
+# from itertools import combinations
+# edges = [set(x) for x in combinations(range(vertices), 2)]
 
 blocks = []
 
-#Create the blocks
+# Create the blocks
 for x in range(vertices):
     blocks.append(Block(colours))
 
 bdd = Generator(blocks)
 
-print(blocks[2].get_index())
+# Block at index 0 cannot be equal to block at index 1
+bdd.add_constraint('!=', blocks[0], blocks[1])
 
-#bdd.add_constraint()
-
-#bdd.create()
+bdd.create()
 
