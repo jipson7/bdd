@@ -48,12 +48,16 @@ class Generator:
             'node_num': self.node_num,
             'cache_size': self.cache_size,
             'block_count': len(self.blocks),
-            'block_domains': '{4, 4, 4}', #TODO Implement this
-            'constraints': 'coolio' #TODO and this 
+            'block_domains': self.__create_block_domains(),
+            'constraints': 'coolio'
         }
         from .template import __bdd_body__
         f = __bdd_body__.format(**data)
         print(f)
+
+    def __create_block_domains(self):
+        lengths = [str(len(x)) for x in self.blocks]
+        return '{' + ', '.join(lengths) + '}'
 
     def execute(self):
         self.create()
