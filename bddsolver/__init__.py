@@ -1,5 +1,6 @@
+import os
+
 from . import exceptions as ex
-from . import constraints as co
 
 
 class Generator:
@@ -13,6 +14,10 @@ class Generator:
     """
 
     blocks = []
+
+    """
+    List of constraints imposed upon the blocks.
+    """
     constraints = []
 
     def __init__(self, blocks=None,
@@ -33,34 +38,54 @@ class Generator:
         else:
             raise ex.BDDGenerateException("Invalid blocks set")
 
-    def add_constraint(self, op, b1=None, b2=None):
-        index1 = self.blocks.index(b1)
-        index2 = self.blocks.index(b2)
 
-        if index1 != -1 and index2 != -1:
-            print("block1 at " + str(index1))
-            print("block2 at " + str(index2))
-        else:
-            print("cant find em")
-
+    """
+    Create a string representation of the C++ Buddy implementation
+    of the problem as described by the blocks and constraints
+    """
     def create(self):
         data = {
             'node_num': self.node_num,
             'cache_size': self.cache_size,
             'block_count': len(self.blocks),
-            'block_domains': self.__create_block_domains(),
-            'constraints': 'coolio'
+            'block_domains': self.__set_block_domains(),
+            'constraints': self.__set_constraints()
         }
         from .template import __bdd_body__
-        f = __bdd_body__.format(**data)
-        print(f)
+        return __bdd_body__.format(**data)
 
-    def __create_block_domains(self):
+    """
+    Create a the C array of length of blocks to be used for
+    allocation in the BuDDy program
+    """
+    def __set_block_domains(self):
         lengths = [str(len(x)) for x in self.blocks]
         return '{' + ', '.join(lengths) + '}'
 
+    def __set_constraints(self):
+        base_constraint = 'bdd constraint = bddtrue;' + os.linesep
+        return base_constraint + os.linesep.join(self.constraints)
+
     def execute(self):
-        self.create()
+        buddy_file = self.create()
+        print(buddy_file)
+
+    def not_equ(self, block1, block2):
+        pass
+
+    def equ(self, block1, block2):
+        pass
+
+    def gt(self, block1, block2):
+        pass
+
+    def gte(self, block1, block2):
+        pass
+
+    def all_unique(self):
+        pass
+
+    def partial(self):
         pass
 
 
@@ -80,15 +105,8 @@ class Block:
     values of the bvec
     """
 
-
-    potential_vals = [] # The list of possible values 
-    length = 0          # Number of possible values
-
-    """
-    The index value is used to specify the block when 
-    identifying constraints
-    """
-    index = None        
+    potential_vals = []  # The list of possible values 
+    length = 0           # Number of possible values
 
     def __init__(self, val):
         if type(val) == int:
@@ -106,3 +124,5 @@ class Block:
     """
     def __len__(self):
         return self.length
+
+
