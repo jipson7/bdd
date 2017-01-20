@@ -14,13 +14,13 @@ int num_bits_for_binary(int x) {
 
 int main() {
 
-    int node_num = 1000000;
-    int cache_size = 1000000;
+    int node_num = 100000000;
+    int cache_size = 100000000;
 
     bdd_init(node_num, cache_size);
 
-    int X = 2; //Number of unique items
-    int Y = 2; //Number of buckets
+    int X = 15; //Number of unique items
+    int Y = 15; //Number of buckets
     int Z = 1;  //Bucket capacity
 
     int domains[X*Y];
@@ -77,7 +77,7 @@ int main() {
     //Get and print solution
     bdd c = c1 & c2;
     
-    cout << fddset << c << endl;
+    //cout << fddset << c << endl;
 
     long num_solutions = (long)bdd_satcount(c);
 
