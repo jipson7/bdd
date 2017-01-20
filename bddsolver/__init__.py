@@ -29,17 +29,9 @@ class Generator:
     """
     def set_blocks(self, blocks):
         if type(blocks) == list:
-            self.__add_keys(blocks)
             self.blocks = blocks
         else:
             raise ex.BDDGenerateException("Invalid blocks set")
-
-    """
-    Assigns a key to each block to be used in specifying constraints
-    """
-    def __add_keys(self, blocks):
-        for i, block in enumerate(blocks):
-            block.set_index(i)
 
     def add_constraint(self, op, b1=None, b2=None):
         index1 = self.blocks.index(b1)
@@ -103,12 +95,6 @@ class Block:
             self.length = len(val)
         else:
             raise ex.BDDGenerateException("Invalid block type.")
-
-    def set_index(self, i):
-        self.index = i
-
-    def get_index(self):
-        return self.index
 
     """
     Length in this case represents the number of 
