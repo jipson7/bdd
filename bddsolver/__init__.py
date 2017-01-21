@@ -1,5 +1,5 @@
 import os
-
+from . import templates
 from . import exceptions as ex
 
 
@@ -38,7 +38,6 @@ class Generator:
         else:
             raise ex.BDDGenerateException("Invalid blocks set")
 
-
     """
     Create a string representation of the C++ Buddy implementation
     of the problem as described by the blocks and constraints
@@ -51,8 +50,7 @@ class Generator:
             'block_domains': self.__set_block_domains(),
             'constraints': self.__set_constraints()
         }
-        from .template import __bdd_body__
-        return __bdd_body__.format(**data)
+        return templates.bdd_body.format(**data)
 
     """
     Create a the C array of length of blocks to be used for
@@ -63,16 +61,19 @@ class Generator:
         return '{' + ', '.join(lengths) + '}'
 
     def __set_constraints(self):
-        base_constraint = 'bdd constraint = bddtrue;' + os.linesep
-        return base_constraint + os.linesep.join(self.constraints)
+        return templates.base_constraint \
+                + os.linesep.join(self.constraints)
 
     def execute(self):
         buddy_file = self.create()
         print(buddy_file)
 
     def not_equ(self, block1, block2):
-        pass
-
+        index1 = self.__get_block_index(block1)
+        index2 = self.__get_block_index(block2)
+        constraint = templates.not_equ.format(index1, index2)
+        self.constraints.append(constraint)
+        
     def equ(self, block1, block2):
         pass
 
@@ -87,6 +88,13 @@ class Generator:
 
     def partial(self):
         pass
+
+    def __get_block_index(self, block):
+        try:
+            return self.blocks.index(block)
+        except ValueError:
+            raise ex.BDDConstraintException('Requested block cannot be found')
+            
 
 
 class Block:
