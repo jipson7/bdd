@@ -7,12 +7,14 @@ bdd_body = """
 #include "bdd.h"
 #include "fdd.h"
 #include "bvec.h"
+
 using namespace std;
+
+const int block_count = {block_count};
+
 int main() {{
 
 bdd_init({node_num}, {cache_size});
-
-int block_count = {block_count};
 
 int domains[block_count] = {block_domains};
 

@@ -20,6 +20,11 @@ class Generator:
     """
     constraints = []
 
+    """
+    Filename used for temporary storage of bdd program
+    """
+    filename = 'temp.cpp'
+
     def __init__(self, blocks=None,
                  node_num=10000000,
                  cache_size=10000000):
@@ -65,8 +70,9 @@ class Generator:
                 + os.linesep.join(self.constraints)
 
     def execute(self):
-        buddy_file = self.create()
-        print(buddy_file)
+        bdd_body = self.create()
+        with open(self.filename, "w") as bdd_file:
+            bdd_file.write(bdd_body)
 
     def not_equ(self, block1, block2):
         index1 = self.__get_block_index(block1)

@@ -233,3 +233,6 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/c,c++,cmake,osx,vim,python,virtualenv
+
+# Temp generation of BDD files
+temp.cpp
