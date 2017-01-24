@@ -17,7 +17,7 @@ for x in range(vertices):
 bdd = Generator(blocks)
 
 # Block at index 0 cannot be equal to block at index 1
-bdd.not_equ(blocks[0], blocks[1])
+bdd.not_equ(blocks[0], 1)
 
 
 bdd.for_all(blocks[0], lambda x: x < 10)

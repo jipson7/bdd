@@ -65,6 +65,10 @@ class Generator:
         lengths = [str(len(x)) for x in self.blocks]
         return '{' + ', '.join(lengths) + '}'
 
+    """
+    Output the constraint strings to the c++ format with the
+    appropriate variable assignment
+    """
     def __set_constraints(self):
         formatted_constraints = [templates.constraint.format(x) 
                                  for x in self.constraints]
@@ -76,6 +80,11 @@ class Generator:
         with open(self.filename, "w") as bdd_file:
             bdd_file.write(bdd_body)
 
+    """
+    Apply the do lambda to the block. Block will only equal
+    the values for which do returns true. The do function
+    must therefore return true or false.
+    """
     def for_all(self, block, do):
         line = []
         i = str(self.__get_block_index(block))
@@ -87,6 +96,10 @@ class Generator:
 
         self.constraints.append(' | '.join(line))
 
+    """
+    Set the variable block to not equal x. X can either be another block or
+    a constant integer.
+    """
     def not_equ(self, block, x):
         index = str(self.__get_block_index(block))
         a = templates.block.format(index)
@@ -112,6 +125,11 @@ class Generator:
     def partial(self):
         pass
 
+    """
+    Private method to get the index of the block from the original
+    list of blocks that was set to the generator. Used for the
+    purposes of C++ generation
+    """
     def __get_block_index(self, block):
         try:
             return self.blocks.index(block)
