@@ -39,5 +39,11 @@ cout << "There are " << num_solutions << " solution(s)." << endl;
 
 base_constraint = 'bdd constraint = bddtrue;' + os.linesep
 
+constraint = 'constraint &= ({});' + os.linesep
+
+block = 'blocks[{}]'
+
 not_equ = 'constraint &= blocks[{}] != blocks[{}];' + os.linesep
+
+bvec_cons = 'bvec_con(blocks[{index}].bitnum(), {cons})'
 

@@ -66,18 +66,35 @@ class Generator:
         return '{' + ', '.join(lengths) + '}'
 
     def __set_constraints(self):
+        formatted_constraints = [templates.constraint.format(x) 
+                                 for x in self.constraints]
         return templates.base_constraint \
-                + os.linesep.join(self.constraints)
+            + os.linesep.join(formatted_constraints)
 
     def execute(self):
         bdd_body = self.create()
         with open(self.filename, "w") as bdd_file:
             bdd_file.write(bdd_body)
 
-    def not_equ(self, block1, block2):
-        index1 = self.__get_block_index(block1)
-        index2 = self.__get_block_index(block2)
-        constraint = templates.not_equ.format(index1, index2)
+    def for_all(self, block, do):
+        line = []
+        i = str(self.__get_block_index(block))
+        block_string = templates.block.format(str(i))
+        for val in range(len(block)):
+            if do(val):
+                constant = templates.bvec_cons.format(index=i, cons=str(val))
+                line.append('(' + block_string + ' == ' + constant + ')')
+
+        self.constraints.append(' | '.join(line))
+
+    def not_equ(self, block, x):
+        index = str(self.__get_block_index(block))
+        a = templates.block.format(index)
+        if type(x) == int:
+            b = templates.bvec_cons.format(index=index, cons=str(x))
+        else:
+            b = templates.block.format(str(self.__get_block_index(x)))
+        constraint = a + ' != ' + b
         self.constraints.append(constraint)
         
     def equ(self, block1, block2):
@@ -138,5 +155,3 @@ class Block:
     """
     def __len__(self):
         return self.length
-
-
