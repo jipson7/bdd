@@ -1,5 +1,5 @@
 import os
-from . import templates
+from . import templates as tem
 from . import exceptions as ex
 
 
@@ -55,7 +55,7 @@ class Generator:
             'block_domains': self.__set_block_domains(),
             'constraints': self.__set_constraints()
         }
-        return templates.bdd_body.format(**data)
+        return tem.bdd_body.format(**data)
 
     """
     Create a the C array of length of blocks to be used for
@@ -70,9 +70,9 @@ class Generator:
     appropriate variable assignment
     """
     def __set_constraints(self):
-        formatted_constraints = [templates.constraint.format(x) 
+        formatted_constraints = [tem.constraint.format(x) 
                                  for x in self.constraints]
-        return templates.base_constraint \
+        return tem.base_constraint \
             + os.linesep.join(formatted_constraints)
 
     def execute(self):
@@ -88,10 +88,10 @@ class Generator:
     def for_all(self, block, do):
         line = []
         i = str(self.__get_block_index(block))
-        block_string = templates.block.format(str(i))
+        block_string = tem.block.format(str(i))
         for val in range(len(block)):
             if do(val):
-                constant = templates.bvec_cons.format(index=i, cons=str(val))
+                constant = tem.bvec_cons.format(index=i, cons=str(val))
                 line.append('(' + block_string + ' == ' + constant + ')')
 
         self.constraints.append(' | '.join(line))
@@ -102,11 +102,11 @@ class Generator:
     """
     def not_equ(self, block, x):
         index = str(self.__get_block_index(block))
-        a = templates.block.format(index)
+        a = tem.block.format(index)
         if type(x) == int:
-            b = templates.bvec_cons.format(index=index, cons=str(x))
+            b = tem.bvec_cons.format(index=index, cons=str(x))
         else:
-            b = templates.block.format(str(self.__get_block_index(x)))
+            b = tem.block.format(str(self.__get_block_index(x)))
         constraint = a + ' != ' + b
         self.constraints.append(constraint)
         
