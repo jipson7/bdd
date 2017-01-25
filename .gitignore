@@ -236,3 +236,6 @@ pip-selfcheck.json
 
 # Temp generation of BDD files
 temp.cpp
+
+# Sample graph image
+sample_graph.png

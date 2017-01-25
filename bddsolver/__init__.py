@@ -135,7 +135,6 @@ class Generator:
             return self.blocks.index(block)
         except ValueError:
             raise ex.BDDConstraintException('Requested block cannot be found')
-            
 
 
 class Block:
