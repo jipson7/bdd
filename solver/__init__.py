@@ -22,12 +22,29 @@ class Constraint:
     pass
 
 class And(Constraint):
-
     def __init__(self, c1, c2):
         self.c1 = c1
         self.c2 = c2
 
+    def get(self):
+        return get(c1) + ' & ' + get(c2)
+    
+class Universal(Constraint):
+    def __init__(self, values, do):
+        self.do = do
+        self.values = values
+        from inspect import signature 
+        self.var_count = len(signature(do).parameters)
 
+    def get(self):
+        perms = itertools.product(self.values, repeat=self.var_count)
+        result = set()
+        for s in perms:
+            args = list(s) 
+            if self.do(*args): result.add(frozenset(s))
+        return result
+
+"""
 class Universal:
 
     values = None
@@ -40,5 +57,4 @@ class Universal:
 
     def __str__(self):
         return str(self.values)
-
-
+"""

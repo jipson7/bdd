@@ -1,4 +1,4 @@
-from solver import Solver, Constraint, Universal
+from solver import Solver, Universal
 
 V = {1, 2, 3, 4, 5, 6}  # Vertices
 
@@ -14,11 +14,13 @@ solver.set_vars(V)
 
 solver.map_to(C)
 
-v_uni = Universal(V, 2)
-print(v_uni)
+c1 = Universal(V, lambda v1, v2: v1 != v2)
 
-c1 = Constraint()
-c1.IN(v_uni, E)
+print(str(c1.get()))
+
+#c2 = Universal(V, lambda v1, v2: {v1, v2})
+
+#c3 = In(c2, E)
 
 """
 c3 = Constraint()
