@@ -1,4 +1,4 @@
-from bddsolver import Generator, Block
+from solver import Generator, Block
 from itertools import combinations
 
 colours = 4
