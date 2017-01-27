@@ -1,7 +1,7 @@
 from solver import Generator, Block
 from itertools import combinations
 
-colours = 4
+colours = ['red', 'yellow', 'green', 'blue']
 vertices = 4
 
 edges = [list(x) for x in combinations(range(vertices), 2)]
@@ -13,7 +13,8 @@ bdd = Generator(blocks)
 for e in edges:
     bdd.not_equ(blocks[e[0]], blocks[e[1]])
 
-result = bdd.execute()
+solutions = bdd.execute()
 
-print(result)
+for s in solutions: print(s)
+
 

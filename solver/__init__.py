@@ -1,4 +1,4 @@
-import os, subprocess
+import os, re, subprocess
 from . import templates as tem
 from . import exceptions as ex
 
@@ -80,7 +80,7 @@ class Generator:
         self.create_file()
         output = self.run_file()
         self.delete_temp_files()
-        return output	
+        return self.parse_output(output)
 
     def create_file(self):
         bdd_body = self.create()
@@ -96,6 +96,22 @@ class Generator:
     def delete_temp_files(self):
         os.remove(self.cpp_filename)
         os.remove(self.exec_filename)
+
+    def parse_output(self, output):
+        solution_re = re.compile("<[\d\s:,]+>")
+        dict_re = re.compile('\d:\d')
+        solutions = []
+        for solution in re.findall(solution_re, output):
+            current_solution = {}
+            for entry in re.findall(dict_re,solution):
+                entries = entry.split(':')
+                index = int(entries[0])
+                block_index = int(entries[1])
+                block_solution = self.blocks[index].get_val(block_index)
+                current_solution[index] = block_solution
+            solutions.append(current_solution)
+        return solutions
+                
 	
 
     """
@@ -183,6 +199,9 @@ class Block:
             self.length = len(val)
         else:
             raise ex.BDDGenerateException("Invalid block type.")
+
+    def get_val(self, index):
+        return self.potential_vals[index]
 
     """
     Length in this case represents the number of 
