@@ -1,4 +1,4 @@
-from solver import Solver, Universal, In, And
+from solver import Solver, Universal, In, And, Imp
 
 V = {1, 2, 3, 4, 5, 6}  # Vertices
 
@@ -23,12 +23,10 @@ c3 = In(c2, E)
 c4 = And(c1, c3)
 print(str(c4.get()))
 
+c5 = Imp(c4, lambda x, y: x != y)
 
 
 """
-c3 = Constraint()
-c3.AND(c1, c2)
-
 c4 = Constraint()
 c4.NOT_EQU(v1.mapped, v2.mapped)
 

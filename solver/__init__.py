@@ -62,3 +62,7 @@ class In(Constraint):
                 result.add(s)
         return result
 
+class Imp(Constraint):
+
+    def __init__(self, constraint, do):
+        pass 
