@@ -27,7 +27,7 @@ class And(Constraint):
         self.c2 = c2
 
     def get(self):
-        return get(c1) + ' & ' + get(c2)
+        return self.c1.get().intersection(self.c2.get())
 
     
 class Universal(Constraint):

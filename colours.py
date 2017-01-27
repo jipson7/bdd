@@ -1,4 +1,4 @@
-from solver import Solver, Universal, In
+from solver import Solver, Universal, In, And
 
 V = {1, 2, 3, 4, 5, 6}  # Vertices
 
@@ -19,7 +19,11 @@ c1 = Universal(V, lambda v1, v2: v1 != v2)
 c2 = Universal(V, lambda v1, v2: True)
 
 c3 = In(c2, E)
-print(str(c3.get()))
+
+c4 = And(c1, c3)
+print(str(c4.get()))
+
+
 
 """
 c3 = Constraint()
