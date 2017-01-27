@@ -28,6 +28,7 @@ class And(Constraint):
 
     def get(self):
         return get(c1) + ' & ' + get(c2)
+
     
 class Universal(Constraint):
     def __init__(self, values, do):
@@ -44,17 +45,20 @@ class Universal(Constraint):
             if self.do(*args): result.add(frozenset(s))
         return result
 
-"""
-class Universal:
+    def __iter__(self):
+        return iter(self.get())
 
-    values = None
-    var_count = 0
 
-    def __init__(self, s, num=1):
-        self.var_count = num
-        perms = itertools.product(s, repeat=num)
-        self.values = {frozenset(p) for p in perms}
+class In(Constraint):
 
-    def __str__(self):
-        return str(self.values)
-"""
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get(self):
+        result = set()
+        for s in self.x:
+            if s in self.y: 
+                result.add(s)
+        return result
+
