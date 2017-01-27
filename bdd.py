@@ -1,18 +1,12 @@
 from bddsolver import Generator, Block
+from itertools import combinations
 
 colours = 4
 vertices = 4
 
-
-# Used for colour map prototype
-from itertools import combinations
 edges = [list(x) for x in combinations(range(vertices), 2)]
 
-blocks = []
-
-# Create the blocks
-for x in range(vertices):
-    blocks.append(Block(colours))
+blocks = [Block(colours) for _ in range(vertices)]
 
 bdd = Generator(blocks)
 
