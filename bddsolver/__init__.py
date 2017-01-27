@@ -1,4 +1,4 @@
-import os
+import os, subprocess
 from . import templates as tem
 from . import exceptions as ex
 
@@ -23,7 +23,8 @@ class Generator:
     """
     Filename used for temporary storage of bdd program
     """
-    filename = 'temp.cpp'
+    cpp_filename = 'temp.cpp'
+    exec_filename = 'temp.out'
 
     def __init__(self, blocks=None,
                  node_num=10000000,
@@ -76,9 +77,26 @@ class Generator:
             + os.linesep.join(formatted_constraints)
 
     def execute(self):
+        self.create_file()
+        output = self.run_file()
+        self.delete_temp_files()
+        return output	
+
+    def create_file(self):
         bdd_body = self.create()
-        with open(self.filename, "w") as bdd_file:
+        with open(self.cpp_filename, "w") as bdd_file:
             bdd_file.write(bdd_body)
+
+    def run_file(self):
+        compile_cmd = 'compbdd ' + self.cpp_filename
+        execute_cmd = './' + self.exec_filename
+        compile_output = subprocess.getoutput(compile_cmd)
+        return subprocess.getoutput(execute_cmd)
+
+    def delete_temp_files(self):
+        os.remove(self.cpp_filename)
+        os.remove(self.exec_filename)
+	
 
     """
     Apply the do lambda to the block. Block will only equal

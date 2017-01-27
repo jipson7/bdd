@@ -13,5 +13,7 @@ bdd = Generator(blocks)
 for e in edges:
     bdd.not_equ(blocks[e[0]], blocks[e[1]])
 
-bdd.execute()
+result = bdd.execute()
+
+print(result)
 
