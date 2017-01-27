@@ -30,10 +30,6 @@ for (int i = 0; i < block_count; i++) {{
 
 cout << fddset << constraint << endl;
 
-long num_solutions = (long)bdd_satcount(constraint);
-
-cout << "There are " << num_solutions << " solution(s)." << endl;
-
 }}
 """
 
