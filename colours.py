@@ -15,6 +15,5 @@ for e in edges:
 
 solutions = bdd.execute()
 
-for s in solutions: print(s)
-
-
+for s in solutions:
+    print(s)

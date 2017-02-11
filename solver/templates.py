@@ -2,8 +2,6 @@ import os
 
 
 bdd_body = """
-#include <stdio.h>
-#include <vector>
 #include "bdd.h"
 #include "fdd.h"
 #include "bvec.h"
@@ -28,7 +26,7 @@ for (int i = 0; i < block_count; i++) {{
 
 {constraints}
 
-cout << fddset << constraint << endl;
+fdd_printset(constraint);
 
 }}
 """
@@ -42,4 +40,3 @@ block = 'blocks[{}]'
 not_equ = 'constraint &= blocks[{}] != blocks[{}];' + os.linesep
 
 bvec_cons = 'bvec_con(blocks[{index}].bitnum(), {cons})'
-

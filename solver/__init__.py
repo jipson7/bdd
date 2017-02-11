@@ -93,7 +93,8 @@ class Generator:
         compile_cmd = 'compbdd ' + self.cpp_filename
         execute_cmd = './' + self.exec_filename
         compile_output = subprocess.getoutput(compile_cmd)
-        print("Compilation " + compile_output)
+        if compile_output:
+            print("Compilation Output: " + compile_output)
         return subprocess.getoutput(execute_cmd)
 
     def delete_temp_files(self):
@@ -101,26 +102,28 @@ class Generator:
         os.remove(self.exec_filename)
 
     def parse_output(self, output):
-        solution_re = re.compile("<[\d\s:,]+>")
-        dict_re = re.compile('\d:\d')
+        solution_re = re.compile("<[\d\s:/,]+>")
+        dict_re = re.compile('\d:[\d/]+')
         solutions = []
         for solution in re.findall(solution_re, output):
             current_solution = {}
             for entry in re.findall(dict_re, solution):
                 entries = entry.split(':')
                 index = int(entries[0])
-                block_index = int(entries[1])
-                block_solution = self.blocks[index].get_val(block_index)
-                current_solution[index] = block_solution
+                block_indices = [int(x) for x in entries[1].split('/')]
+                block_solutions = []
+                for block_index in block_indices:
+                    block_solutions.append(self.blocks[index].get_val(block_index))
+                current_solution[index] = block_solutions
             solutions.append(current_solution)
         return solutions
 
     """
-    Apply the do lambda to the block. Block will only equal
+    Map the do lambda to the block. Block will only equal
     the values for which do returns true. The do function
     must therefore return true or false.
     """
-    def for_all(self, block, do):
+    def map(self, do, block):
         line = []
         i = str(self.__get_block_index(block))
         block_string = tem.block.format(str(i))
@@ -136,12 +139,30 @@ class Generator:
     a constant integer.
     """
     def not_equ(self, block, x):
-        self.equ_set(block, x, '!=')
+        self.op_set(block, x, '!=')
 
     def equ(self, block, x):
-        self.equ_set(block, x, '==')
+        self.op_set(block, x, '==')
 
-    def equ_set(self, block, x, operator):
+    def gt(self, block, x):
+        self.op_set(block, x, '>')
+
+    def gte(self, block, x):
+        self.op_set(block, x, '>=')
+
+    def lt(self, block, x):
+        self.op_set(block, x, '<')
+
+    def lte(self, block, x):
+        self.op_set(block, x, '<=')
+
+    def all_unique(self):
+        pass
+
+    def partial(self):
+        pass
+
+    def op_set(self, block, x, operator):
         index = str(self.__get_block_index(block))
         a = tem.block.format(index)
         if type(x) == int:
@@ -150,18 +171,6 @@ class Generator:
             b = tem.block.format(str(self.__get_block_index(x)))
         constraint = a + ' ' + operator + ' ' + b
         self.constraints.append(constraint)
-
-    def gt(self, block1, block2):
-        pass
-
-    def gte(self, block1, block2):
-        pass
-
-    def all_unique(self):
-        pass
-
-    def partial(self):
-        pass
 
     """
     Private method to get the index of the block from the original
