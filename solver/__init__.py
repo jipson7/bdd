@@ -55,8 +55,8 @@ class Generator:
             'node_num': self.node_num,
             'cache_size': self.cache_size,
             'block_count': len(self.blocks),
-            'block_domains': self.__set_block_domains(),
-            'constraints': self.__set_constraints()
+            'block_domains': self.set_block_domains(),
+            'constraints': self.set_constraints()
         }
         return tem.bdd_body.format(**data)
 
@@ -64,7 +64,7 @@ class Generator:
     Create a the C array of length of blocks to be used for
     allocation in the BuDDy program
     """
-    def __set_block_domains(self):
+    def set_block_domains(self):
         lengths = [str(len(x)) for x in self.blocks]
         return '{' + ', '.join(lengths) + '}'
 
@@ -72,7 +72,7 @@ class Generator:
     Output the constraint strings to the c++ format with the
     appropriate variable assignment
     """
-    def __set_constraints(self):
+    def set_constraints(self):
         formatted_constraints = [tem.constraint.format(x)
                                  for x in self.constraints]
         return tem.base_constraint \
@@ -103,20 +103,24 @@ class Generator:
 
     def parse_output(self, output):
         solution_re = re.compile("<[\d\s:/,]+>")
-        dict_re = re.compile('\d:[\d/]+')
         solutions = []
-        for solution in re.findall(solution_re, output):
-            current_solution = {}
-            for entry in re.findall(dict_re, solution):
-                entries = entry.split(':')
-                index = int(entries[0])
-                block_indices = [int(x) for x in entries[1].split('/')]
-                block_solutions = []
-                for block_index in block_indices:
-                    block_solutions.append(self.blocks[index].get_val(block_index))
-                current_solution[index] = block_solutions
-            solutions.append(current_solution)
+        for s in re.findall(solution_re, output):
+            solutions.append(self.parse_solution(s))
         return solutions
+
+    def parse_solution(self, solution):
+        dict_re = re.compile('\d:[\d/]+')
+        parsed = {}
+        for entry in re.findall(dict_re, solution):
+            entries = entry.split(':')
+            index = int(entries[0])
+            block_indices = [int(x) for x in entries[1].split('/')]
+            block_solutions = []
+            for block_index in block_indices:
+                block_val = self.blocks[index].get_val(block_index)
+                block_solutions.append(block_val)
+            parsed[index] = block_solutions
+        return parsed
 
     """
     Map the do lambda to the block. Block will only equal
@@ -125,7 +129,7 @@ class Generator:
     """
     def map(self, do, block):
         line = []
-        i = str(self.__get_block_index(block))
+        i = str(self.get_block_index(block))
         block_string = tem.block.format(str(i))
         for val in range(len(block)):
             if do(val):
@@ -163,21 +167,21 @@ class Generator:
         pass
 
     def op_set(self, block, x, operator):
-        index = str(self.__get_block_index(block))
+        index = str(self.get_block_index(block))
         a = tem.block.format(index)
         if type(x) == int:
             b = tem.bvec_cons.format(index=index, cons=str(x))
         else:
-            b = tem.block.format(str(self.__get_block_index(x)))
+            b = tem.block.format(str(self.get_block_index(x)))
         constraint = a + ' ' + operator + ' ' + b
         self.constraints.append(constraint)
 
     """
-    Private method to get the index of the block from the original
+    Method to get the index of the block from the original
     list of blocks that was set to the generator. Used for the
     purposes of C++ generation
     """
-    def __get_block_index(self, block):
+    def get_block_index(self, block):
         try:
             return self.blocks.index(block)
         except ValueError:
@@ -206,7 +210,7 @@ class Block:
     def __init__(self, val):
         if type(val) == int:
             self.potential_vals = [x for x in range(val)]
-            self.length = len(self.potential_vals)
+            self.length = val
         elif type(val) == list:
             self.potential_vals = val
             self.length = len(val)
