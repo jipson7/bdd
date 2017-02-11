@@ -1,14 +1,16 @@
-import os, re, subprocess
+import os
+import re
+import subprocess
 from . import templates as tem
 from . import exceptions as ex
 
 
 class Generator:
     """
-    Used to generate and run BuDDy file based on given 
+    Used to generate and run BuDDy file based on given
     blocks and constraints on said blocks
 
-    Depending on the constraints, the generator will output the 
+    Depending on the constraints, the generator will output the
     possible solutions. A solution is a value assigned to each block
     that satisfies the given constraints.
     """
@@ -71,7 +73,7 @@ class Generator:
     appropriate variable assignment
     """
     def __set_constraints(self):
-        formatted_constraints = [tem.constraint.format(x) 
+        formatted_constraints = [tem.constraint.format(x)
                                  for x in self.constraints]
         return tem.base_constraint \
             + os.linesep.join(formatted_constraints)
@@ -91,6 +93,7 @@ class Generator:
         compile_cmd = 'compbdd ' + self.cpp_filename
         execute_cmd = './' + self.exec_filename
         compile_output = subprocess.getoutput(compile_cmd)
+        print("Compilation " + compile_output)
         return subprocess.getoutput(execute_cmd)
 
     def delete_temp_files(self):
@@ -103,7 +106,7 @@ class Generator:
         solutions = []
         for solution in re.findall(solution_re, output):
             current_solution = {}
-            for entry in re.findall(dict_re,solution):
+            for entry in re.findall(dict_re, solution):
                 entries = entry.split(':')
                 index = int(entries[0])
                 block_index = int(entries[1])
@@ -111,8 +114,6 @@ class Generator:
                 current_solution[index] = block_solution
             solutions.append(current_solution)
         return solutions
-                
-	
 
     """
     Apply the do lambda to the block. Block will only equal
@@ -135,17 +136,20 @@ class Generator:
     a constant integer.
     """
     def not_equ(self, block, x):
+        self.equ_set(block, x, '!=')
+
+    def equ(self, block, x):
+        self.equ_set(block, x, '==')
+
+    def equ_set(self, block, x, operator):
         index = str(self.__get_block_index(block))
         a = tem.block.format(index)
         if type(x) == int:
             b = tem.bvec_cons.format(index=index, cons=str(x))
         else:
             b = tem.block.format(str(self.__get_block_index(x)))
-        constraint = a + ' != ' + b
+        constraint = a + ' ' + operator + ' ' + b
         self.constraints.append(constraint)
-        
-    def equ(self, block1, block2):
-        pass
 
     def gt(self, block1, block2):
         pass
@@ -187,7 +191,7 @@ class Block:
     values of the bvec
     """
 
-    potential_vals = []  # The list of possible values 
+    potential_vals = []  # The list of possible values
     length = 0           # Number of possible values
 
     def __init__(self, val):
@@ -204,7 +208,7 @@ class Block:
         return self.potential_vals[index]
 
     """
-    Length in this case represents the number of 
+    Length in this case represents the number of
     possible values that the block can represent.
     """
     def __len__(self):
