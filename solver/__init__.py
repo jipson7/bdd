@@ -94,7 +94,7 @@ class Generator:
         execute_cmd = './' + self.exec_filename
         compile_output = subprocess.getoutput(compile_cmd)
         if compile_output:
-            print("Compilation Output: " + compile_output)
+            raise ex.BDDCompileException(compile_output)
         return subprocess.getoutput(execute_cmd)
 
     def delete_temp_files(self):

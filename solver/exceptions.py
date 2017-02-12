@@ -8,3 +8,7 @@ class BDDGenerateException(BDDException):
 
 class BDDConstraintException(BDDException):
     pass
+
+
+class BDDCompileException(BDDException):
+    pass
