@@ -1,17 +1,40 @@
 from solver import Generator, Block
 from itertools import combinations
+from sqlalchemy import create_engine, Column, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
+"""
+Sqlalchemy Setup
+"""
+engine = create_engine('sqlite:///colours.db')
+session = (sessionmaker(bind=engine))()
+Base = declarative_base()
+
+
+class Edge(Base):
+    __tablename__ = 'edge'
+    v1 = Column(Integer, primary_key=True)
+    v2 = Column(Integer, primary_key=True)
+
+
+class Vertex(Base):
+    __tablename__ = 'vertex'
+    v = Column(Integer, primary_key=True)
+
+
+"""
+Run BDD test
+"""
 colours = ['red', 'yellow', 'green', 'blue']
-vertices = 4
+num_v = session.query(Vertex).count()
 
-edges = [list(x) for x in combinations(range(vertices), 2)]
-
-blocks = [Block(colours) for _ in range(vertices)]
+blocks = [Block(colours) for _ in range(num_v)]
 
 bdd = Generator(blocks)
 
-for e in edges:
-    bdd.not_equ(blocks[e[0]], blocks[e[1]])
+for e in session.query(Edge):
+    bdd.not_equ(blocks[e.v1], blocks[e.v2])
 
 solutions = bdd.execute()
 
