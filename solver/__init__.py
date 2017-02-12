@@ -151,24 +151,50 @@ class Generator:
         self.constraints.append(' | '.join(line))
 
     """
-    Set the variable block to not equal x. X can either be another block or
-    a constant integer.
+    Not Equal
+    block - A given block
+    x - another block or a constant
     """
     def not_equ(self, block, x):
         self.op_set(block, x, '!=')
 
+    """
+    Equal to
+    block - A given block
+    x - another block or a constant
+    """
     def equ(self, block, x):
         self.op_set(block, x, '==')
 
+    """
+    Greater than
+    block - A given block
+    x - another block or a constant
+    """
     def gt(self, block, x):
         self.op_set(block, x, '>')
 
+    """
+    Greater than or equal to
+    block - A given block
+    x - another block or a constant
+    """
     def gte(self, block, x):
         self.op_set(block, x, '>=')
 
+    """
+    Less than
+    block - A given block
+    x - another block or a constant
+    """
     def lt(self, block, x):
         self.op_set(block, x, '<')
 
+    """
+    Less than or equal to
+    block - A given block
+    x - another block or a constant
+    """
     def lte(self, block, x):
         self.op_set(block, x, '<=')
 
