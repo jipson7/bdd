@@ -101,13 +101,25 @@ class Generator:
         os.remove(self.cpp_filename)
         os.remove(self.exec_filename)
 
+    """
+    Return a list of solutions if they exist. If all block instances
+    satisfy the constraints, then return true. If the BDD is
+    unsatisfiable, then return false.
+    """
     def parse_output(self, output):
+        if output == 'T':
+            return True
+        if output == 'F':
+            return False
         solution_re = re.compile("<[\d\s:/,]+>")
         solutions = []
         for s in re.findall(solution_re, output):
             solutions.append(self.parse_solution(s))
         return solutions
 
+    """
+    Parse a single solution and create a python dictionary from it.
+    """
     def parse_solution(self, solution):
         dict_re = re.compile('\d:[\d/]+')
         parsed = {}
