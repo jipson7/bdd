@@ -1,5 +1,4 @@
 from solver import Generator, Block
-from itertools import combinations
 from sqlalchemy import create_engine, Column, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -8,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 Sqlalchemy Setup
 """
 engine = create_engine('sqlite:///colours.db')
-session = (sessionmaker(bind=engine))()
+db = (sessionmaker(bind=engine))()
 Base = declarative_base()
 
 
@@ -27,13 +26,13 @@ class Vertex(Base):
 Run BDD test
 """
 colours = ['red', 'yellow', 'green', 'blue']
-num_v = session.query(Vertex).count()
+num_v = db.query(Vertex).count()
 
 blocks = [Block(colours) for _ in range(num_v)]
 
 bdd = Generator(blocks)
 
-for e in session.query(Edge):
+for e in db.query(Edge):
     bdd.not_equ(blocks[e.v1], blocks[e.v2])
 
 solutions = bdd.execute()
