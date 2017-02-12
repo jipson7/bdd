@@ -152,7 +152,7 @@ class Generator:
 
     """
     Not Equal
-    block - A given block
+    block - A given block or a preproduced block string
     x - another block or a constant
     """
     def not_equ(self, block, x):
@@ -160,7 +160,7 @@ class Generator:
 
     """
     Equal to
-    block - A given block
+    block - A given block or a preproduced block string
     x - another block or a constant
     """
     def equ(self, block, x):
@@ -168,7 +168,7 @@ class Generator:
 
     """
     Greater than
-    block - A given block
+    block - A given block or a preproduced block string
     x - another block or a constant
     """
     def gt(self, block, x):
@@ -176,7 +176,7 @@ class Generator:
 
     """
     Greater than or equal to
-    block - A given block
+    block - A given block or a preproduced block string
     x - another block or a constant
     """
     def gte(self, block, x):
@@ -184,7 +184,7 @@ class Generator:
 
     """
     Less than
-    block - A given block
+    block - A given block or a preproduced block string
     x - another block or a constant
     """
     def lt(self, block, x):
@@ -192,7 +192,7 @@ class Generator:
 
     """
     Less than or equal to
-    block - A given block
+    block - A given block or a preproduced block string
     x - another block or a constant
     """
     def lte(self, block, x):
@@ -201,16 +201,20 @@ class Generator:
     def all_unique(self):
         pass
 
-    def partial(self):
-        pass
-
     def op_set(self, block, x, operator):
         index = str(self.get_block_index(block))
-        a = tem.block.format(index)
-        if type(x) == int:
+        if isinstance(block, Block):
+            a = tem.block.format(index)
+        elif type(block) == str:
+            a = block
+        else:
+            raise ex.BDDConstraintException("Invalid arguments to contraint.")
+        if isinstance(x, Block):
+            b = tem.block.format(str(self.get_block_index(x)))
+        elif type(x) == int:
             b = tem.bvec_cons.format(index=index, cons=str(x))
         else:
-            b = tem.block.format(str(self.get_block_index(x)))
+            raise ex.BDDConstraintException("Invalid arguments to contraint.")
         constraint = a + ' ' + operator + ' ' + b
         self.constraints.append(constraint)
 

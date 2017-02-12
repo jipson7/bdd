@@ -37,6 +37,4 @@ constraint = 'constraint &= ({});' + os.linesep
 
 block = 'blocks[{}]'
 
-not_equ = 'constraint &= blocks[{}] != blocks[{}];' + os.linesep
-
 bvec_cons = 'bvec_con(blocks[{index}].bitnum(), {cons})'
