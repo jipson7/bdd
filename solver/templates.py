@@ -10,17 +10,6 @@ using namespace std;
 
 const int block_count = {block_count};
 
-int get_max_bitnum(bvec* blocks) {{
-  int max = 0;
-  for (int i = 0; i < block_count; i++) {{
-      int b = blocks[i].bitnum();
-      if (b > max) {{
-          max = b;
-      }}
-  }}
-  return max;
-}}
-
 int main() {{
 
 bdd_init({node_num}, {cache_size});
@@ -35,7 +24,7 @@ for (int i = 0; i < block_count; i++) {{
     blocks[i] = bvec_varfdd(i);
 }}
 
-int max_bits = get_max_bitnum(blocks);
+int max_bits = {max_bits};
 
 {constraints}
 
@@ -48,6 +37,6 @@ base_constraint = 'bdd constraint = bddtrue;' + os.linesep
 
 constraint = 'constraint &= ({});' + os.linesep
 
-block = 'blocks[{}]'
+block = 'bvec_coerce(max_bits, blocks[{}])'
 
-bvec_cons = 'bvec_con(max_bits, {})'
+constant = 'bvec_con(max_bits, {})'

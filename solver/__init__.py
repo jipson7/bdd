@@ -1,6 +1,9 @@
 import os
 import re
 import subprocess
+import operator
+import functools
+import math
 from . import templates as tem
 from . import exceptions as ex
 
@@ -21,6 +24,11 @@ class Generator:
     List of constraints imposed upon the blocks.
     """
     constraints = []
+
+    """
+    Max bit size used for cumulative operations
+    """
+    max_bits = 2
 
     """
     Filename used for temporary storage of bdd program
@@ -56,6 +64,7 @@ class Generator:
             'cache_size': self.cache_size,
             'block_count': len(self.blocks),
             'block_domains': self.set_block_domains(),
+            'max_bits': self.max_bits,
             'constraints': self.set_constraints()
         }
         return tem.bdd_body.format(**data)
@@ -146,15 +155,31 @@ class Generator:
         block_string = tem.block.format(str(i))
         for val in range(len(block)):
             if do(val):
-                constant = tem.bvec_cons.format(val)
+                constant = tem.constant.format(val)
                 line.append('(' + block_string + ' == ' + constant + ')')
 
         self.constraints.append(' | '.join(line))
 
     def apply(self, operator, blocks):
+        valid_operators = ['+', '-', '*', '/']
+        if operator not in valid_operators:
+            ex.BDDConstraintException('Invalid operator used on apply.')
+        self.set_max_bits(operator)
         operator = " " + operator + " "
-        block_strings = [self.get_block_string(b) for b in blocks]
+        block_strings = [self.get_block_string(b) for b in self.blocks]
         return operator.join(block_strings)
+
+    def set_max_bits(self, op):
+        block_lengths = [len(b) for b in self.blocks]
+        if op == '+':
+            m = sum(block_lengths)
+        elif op == '*':
+            m = functools.reduce(operator.mul, block_lengths)
+        elif op == '/' or op == '-':
+            m = max(block_lengths)
+        m_bits = int(math.floor(math.log(m, 2)) + 1)
+        if m_bits > self.max_bits:
+            self.max_bits = m_bits
 
     """
     Not Equal
@@ -213,7 +238,7 @@ class Generator:
         elif type(op) == str:
             return op
         elif type(op) == int:
-            return tem.bvec_cons.format(str(op))
+            return tem.constant.format(str(op))
         else:
             raise ex.BDDConstraintException("Invalid arguments to contraint.")
 

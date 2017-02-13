@@ -7,7 +7,7 @@ Z = 1  # Bucket Capacity
 
 block_matrix = []
 
-block_values = [True, False]
+block_values = [False, True]
 
 for i in range(X):
     block_matrix.append([])
@@ -20,10 +20,9 @@ bdd = Generator(block_list)
 
 temp_block = bdd.apply('+', block_matrix[0])
 
-print(temp_block)
-
 bdd.lte(temp_block, Z)
 
 solutions = bdd.execute()
 
-print(solutions)
+for s in solutions:
+    print(s)
