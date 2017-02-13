@@ -18,5 +18,12 @@ block_list = reduce(lambda x, y: x+y, block_matrix)
 
 bdd = Generator(block_list)
 
-solutions = bdd.execute()
-print(solutions)
+temp_block = bdd.apply('+', block_matrix[0])
+
+print(temp_block)
+
+# bdd.lte(temp_block, Z)
+
+# solutions = bdd.execute()
+
+# print(solutions)

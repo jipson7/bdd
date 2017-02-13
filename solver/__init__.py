@@ -98,8 +98,9 @@ class Generator:
         return subprocess.getoutput(execute_cmd)
 
     def delete_temp_files(self):
-        os.remove(self.cpp_filename)
-        os.remove(self.exec_filename)
+        pass
+        # os.remove(self.cpp_filename)
+        # os.remove(self.exec_filename)
 
     """
     Return a list of solutions if they exist. If all block instances
@@ -145,10 +146,15 @@ class Generator:
         block_string = tem.block.format(str(i))
         for val in range(len(block)):
             if do(val):
-                constant = tem.bvec_cons.format(index=i, cons=str(val))
+                constant = tem.bvec_cons.format(val)
                 line.append('(' + block_string + ' == ' + constant + ')')
 
         self.constraints.append(' | '.join(line))
+
+    def apply(self, operator, blocks):
+        operator = " " + operator + " "
+        block_strings = [self.get_block_string(b) for b in blocks]
+        return operator.join(block_strings)
 
     """
     Not Equal
@@ -156,7 +162,7 @@ class Generator:
     x - another block or a constant
     """
     def not_equ(self, block, x):
-        self.op_set(block, x, '!=')
+        self.set_operation(block, x, '!=')
 
     """
     Equal to
@@ -164,7 +170,7 @@ class Generator:
     x - another block or a constant
     """
     def equ(self, block, x):
-        self.op_set(block, x, '==')
+        self.set_operation(block, x, '==')
 
     """
     Greater than
@@ -172,7 +178,7 @@ class Generator:
     x - another block or a constant
     """
     def gt(self, block, x):
-        self.op_set(block, x, '>')
+        self.set_operation(block, x, '>')
 
     """
     Greater than or equal to
@@ -180,7 +186,7 @@ class Generator:
     x - another block or a constant
     """
     def gte(self, block, x):
-        self.op_set(block, x, '>=')
+        self.set_operation(block, x, '>=')
 
     """
     Less than
@@ -188,7 +194,7 @@ class Generator:
     x - another block or a constant
     """
     def lt(self, block, x):
-        self.op_set(block, x, '<')
+        self.set_operation(block, x, '<')
 
     """
     Less than or equal to
@@ -196,27 +202,31 @@ class Generator:
     x - another block or a constant
     """
     def lte(self, block, x):
-        self.op_set(block, x, '<=')
+        self.set_operation(block, x, '<=')
 
     def all_unique(self):
         pass
 
-    def op_set(self, block, x, operator):
-        index = str(self.get_block_index(block))
-        if isinstance(block, Block):
-            a = tem.block.format(index)
-        elif type(block) == str:
-            a = block
-        else:
-            raise ex.BDDConstraintException("Invalid arguments to contraint.")
-        if isinstance(x, Block):
-            b = tem.block.format(str(self.get_block_index(x)))
-        elif type(x) == int:
-            b = tem.bvec_cons.format(index=index, cons=str(x))
-        else:
-            raise ex.BDDConstraintException("Invalid arguments to contraint.")
-        constraint = a + ' ' + operator + ' ' + b
+    def set_operation(self, a, b, operator):
+        op1 = self.set_operand(a)
+        op2 = self.set_operand(b)
+        constraint = op1 + ' ' + operator + ' ' + op2
         self.constraints.append(constraint)
+
+    def set_operand(self, op):
+        if isinstance(op, Block):
+            index = str(self.get_block_index(op))
+            return tem.block.format(index)
+        elif type(op) == str:
+            return op
+        elif type(op) == int:
+            index = str(self.get_block_index(op))
+            return tem.bvec_cons.format(str(op))
+        else:
+            raise ex.BDDConstraintException("Invalid arguments to contraint.")
+
+    def get_block_string(self, block):
+        return tem.block.format(str(self.get_block_index(block)))
 
     """
     Method to get the index of the block from the original
