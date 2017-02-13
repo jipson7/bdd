@@ -107,9 +107,8 @@ class Generator:
         return subprocess.getoutput(execute_cmd)
 
     def delete_temp_files(self):
-        pass
-        # os.remove(self.cpp_filename)
-        # os.remove(self.exec_filename)
+        os.remove(self.cpp_filename)
+        os.remove(self.exec_filename)
 
     """
     Return a list of solutions if they exist. If all block instances
