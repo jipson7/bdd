@@ -142,7 +142,18 @@ class Generator:
                 block_val = self.blocks[index].get_val(block_index)
                 block_solutions.append(block_val)
             parsed[index] = block_solutions
-        return parsed
+        return self.populate_solution_truths(parsed)
+
+    """
+    If all instances of a block satisfy the assignment, then
+    the block is excluded from the solution by BuDDy. We will
+    re-add it here for verbosity.
+    """
+    def populate_solution_truths(self, solutions):
+        for i in range(len(self.blocks)):
+            if i not in solutions:
+                solutions[i] = self.blocks[i].potential_vals
+        return solutions
 
     """
     Map the do lambda to the block. Block will only equal
