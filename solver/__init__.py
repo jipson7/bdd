@@ -166,7 +166,7 @@ class Generator:
             ex.BDDConstraintException('Invalid operator used on apply.')
         self.set_max_bits(operator)
         operator = " " + operator + " "
-        block_strings = [self.get_block_string(b) for b in self.blocks]
+        block_strings = [self.get_block_string(b) for b in blocks]
         return operator.join(block_strings)
 
     def set_max_bits(self, op):
