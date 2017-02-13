@@ -158,48 +158,36 @@ class Generator:
 
     """
     Not Equal
-    block - A given block or a preproduced block string
-    x - another block or a constant
     """
     def not_equ(self, block, x):
         self.set_operation(block, x, '!=')
 
     """
     Equal to
-    block - A given block or a preproduced block string
-    x - another block or a constant
     """
     def equ(self, block, x):
         self.set_operation(block, x, '==')
 
     """
     Greater than
-    block - A given block or a preproduced block string
-    x - another block or a constant
     """
     def gt(self, block, x):
         self.set_operation(block, x, '>')
 
     """
     Greater than or equal to
-    block - A given block or a preproduced block string
-    x - another block or a constant
     """
     def gte(self, block, x):
         self.set_operation(block, x, '>=')
 
     """
     Less than
-    block - A given block or a preproduced block string
-    x - another block or a constant
     """
     def lt(self, block, x):
         self.set_operation(block, x, '<')
 
     """
     Less than or equal to
-    block - A given block or a preproduced block string
-    x - another block or a constant
     """
     def lte(self, block, x):
         self.set_operation(block, x, '<=')
@@ -207,10 +195,15 @@ class Generator:
     def all_unique(self):
         pass
 
+    """
+    Construct a string BDD operation
+    a - operand(block, block_string, constant)
+    b - operand(block, block_string, constant)
+    """
     def set_operation(self, a, b, operator):
         op1 = self.set_operand(a)
         op2 = self.set_operand(b)
-        constraint = op1 + ' ' + operator + ' ' + op2
+        constraint = '(' + op1 + ') ' + operator + ' (' + op2 + ')'
         self.constraints.append(constraint)
 
     def set_operand(self, op):
@@ -220,7 +213,6 @@ class Generator:
         elif type(op) == str:
             return op
         elif type(op) == int:
-            index = str(self.get_block_index(op))
             return tem.bvec_cons.format(str(op))
         else:
             raise ex.BDDConstraintException("Invalid arguments to contraint.")

@@ -22,8 +22,8 @@ temp_block = bdd.apply('+', block_matrix[0])
 
 print(temp_block)
 
-# bdd.lte(temp_block, Z)
+bdd.lte(temp_block, Z)
 
-# solutions = bdd.execute()
+solutions = bdd.execute()
 
-# print(solutions)
+print(solutions)

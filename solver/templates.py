@@ -37,8 +37,6 @@ for (int i = 0; i < block_count; i++) {{
 
 int max_bits = get_max_bitnum(blocks);
 
-std::cout << "max bits: " << get_max_bitnum(blocks) << std::endl;
-
 {constraints}
 
 fdd_printset(constraint);
