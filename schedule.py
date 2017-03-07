@@ -1,3 +1,4 @@
+import datetime as dt
 from solver import Generator, Block
 from sqlalchemy import create_engine, Column, Integer, Text, Time, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -50,15 +51,28 @@ class Classroom(Base):
     capacity = Column(Integer)
 
 
+def time_overlap(t1, t2):
+    return (t1.start_time <= t2.end_time and t1.start_time >= t2.start_time) \
+            or (t2.start_time <= t1.end_time and t2.start_time >= t1.start_time)
+
+sections = db.query(Section).all()
+
 tas = db.query(TA).all()
 
-section_count = db.query(Section).count()
+blocks = [Block(tas) for _ in sections]
 
-section_blocks = [Block(db.query(TA).all()) for _ in range(section_count)]
+bdd = Generator(blocks)
 
-bdd = Generator(section_blocks)
+for i, section in enumerate(sections):
+    for ta in tas:
+        for restriction in ta.restrictions:
+            if time_overlap(restriction, section):
+                index = tas.index(ta)
+                bdd.not_equ(blocks[i], index)
+
 
 solutions = bdd.execute()
 
+print(solutions)
 
 # Produce all solutions: True
