@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 """
 Sqlalchemy Setup
 """
-engine = create_engine('sqlite:///colours.db')
+engine = create_engine('sqlite:///databases/colours.db')
 db = (sessionmaker(bind=engine))()
 Base = declarative_base()
 
