@@ -17,17 +17,25 @@ INSERT INTO `teaching_assistants` VALUES (9,'rebecca');
 INSERT INTO `teaching_assistants` VALUES (10,'courtney');
 INSERT INTO `teaching_assistants` VALUES (11,'josh');
 INSERT INTO `teaching_assistants` VALUES (12,'jeremy');
+
+
+
 CREATE TABLE "ta_prior_engagements" (
+	`id`	INTEGER NOT NULL,
 	`day_of_week`	INTEGER NOT NULL,
 	`start_time`	time NOT NULL,
 	`end_time`	time NOT NULL,
 	`teaching_assistant_id`	INTEGER NOT NULL,
+	PRIMARY KEY(`id`),
 	FOREIGN KEY(`teaching_assistant_id`) REFERENCES `teaching_assistants`(`teaching_assistant_id`)
 );
-INSERT INTO `ta_prior_engagements` VALUES (1,'12:40:00','14:00:00',1);
-INSERT INTO `ta_prior_engagements` VALUES (3,'08:10:00','09:30:00',2);
-INSERT INTO `ta_prior_engagements` VALUES (3,'08:10:00','09:30:00',12);
-INSERT INTO `ta_prior_engagements` VALUES (1,'12:40:00','14:00:00',12);
+INSERT INTO `ta_prior_engagements` VALUES (1,1,'12:40:00','14:00:00',1);
+INSERT INTO `ta_prior_engagements` VALUES (2,3,'08:10:00','09:30:00',2);
+INSERT INTO `ta_prior_engagements` VALUES (3,3,'08:10:00','09:30:00',12);
+INSERT INTO `ta_prior_engagements` VALUES (4,1,'12:40:00','14:00:00',12);
+
+
+
 CREATE TABLE "ta_assignments" (
 	`assignment_id`	INTEGER NOT NULL,
 	`solution`	INTEGER,
@@ -37,6 +45,9 @@ CREATE TABLE "ta_assignments" (
 	FOREIGN KEY(`teaching_assistant_id`) REFERENCES `teaching_assistants`(`teaching_assistant_id`),
 	FOREIGN KEY(`section_id`) REFERENCES `sections`(`section_id`)
 );
+
+
+
 CREATE TABLE sections
 (
   section_id INTEGER NOT NULL,
@@ -61,6 +72,8 @@ INSERT INTO `sections` VALUES (9,5,4,5,'08:10:00','09:30:00');
 INSERT INTO `sections` VALUES (10,5,5,1,'12:40:00','14:00:00');
 INSERT INTO `sections` VALUES (11,6,5,2,'12:40:00','14:00:00');
 INSERT INTO `sections` VALUES (12,6,5,3,'12:40:00','14:00:00');
+
+
 CREATE TABLE courses
 (
   course_id INTEGER NOT NULL,
@@ -74,6 +87,9 @@ INSERT INTO `courses` VALUES (3,'course3','');
 INSERT INTO `courses` VALUES (4,'course4','');
 INSERT INTO `courses` VALUES (5,'course5','');
 INSERT INTO `courses` VALUES (6,'course6','');
+
+
+
 CREATE TABLE classrooms
 (
   classroom_id INTEGER NOT NULL,
