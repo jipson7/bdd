@@ -15,6 +15,7 @@ class TA(Base):
     __tablename__ = 'teaching_assistants'
     teaching_assistant_id = Column(Integer, primary_key=True)
     ta_name = Column(Text)
+    restrictions = relationship('TA_Restriction')
 
 
 class TA_Restriction(Base):
@@ -23,7 +24,7 @@ class TA_Restriction(Base):
     day_of_week = Column(Integer)
     start_time = Column(Time)
     end_time = Column(Time)
-    teaching_assistant_id = Column(Integer)
+    teaching_assistant_id = Column(Integer, ForeignKey('teaching_assistants.teaching_assistant_id'))
 
 
 class Section(Base):
@@ -51,16 +52,13 @@ class Classroom(Base):
 
 tas = db.query(TA).all()
 
-for ta in tas:
-    print(ta.ta_name)
+section_count = db.query(Section).count()
 
-#blocks = [Block(colours) for _ in range(num_v)]
-#
-#bdd = Generator(blocks)
-#
-#solutions = bdd.execute()
-#
-#for s in solutions:
-#    print(s)
+section_blocks = [Block(db.query(TA).all()) for _ in range(section_count)]
+
+bdd = Generator(section_blocks)
+
+solutions = bdd.execute()
 
 
+# Produce all solutions: True
