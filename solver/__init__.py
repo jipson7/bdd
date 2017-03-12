@@ -50,6 +50,11 @@ class Generator:
     """
     def set_blocks(self, blocks):
         if type(blocks) == list:
+            max_num = 0
+            for block in blocks:
+                if len(block) > max_num:
+                    max_num = len(block)
+            self.set_max_bits(max_num)
             self.blocks = blocks
         else:
             raise ex.BDDGenerateException("Invalid blocks set")
@@ -107,7 +112,7 @@ class Generator:
         return subprocess.getoutput(execute_cmd)
 
     def delete_temp_files(self):
-        os.remove(self.cpp_filename)
+        # os.remove(self.cpp_filename)
         os.remove(self.exec_filename)
 
     """
@@ -161,11 +166,11 @@ class Generator:
     """
     def map(self, do, block):
         line = []
-        i = str(self.get_block_index(block))
-        block_string = tem.block.format(str(i))
-        for val in range(len(block)):
+        block_index = self.get_block_index(block)
+        block_string = tem.block.format(str(block_index))
+        for i, val in enumerate(block.potential_vals):
             if do(val):
-                constant = tem.constant.format(val)
+                constant = tem.constant.format(i)
                 line.append('(' + block_string + ' == ' + constant + ')')
 
         self.constraints.append(' | '.join(line))
@@ -174,12 +179,12 @@ class Generator:
         valid_operators = ['+', '-', '*', '/']
         if operator not in valid_operators:
             ex.BDDConstraintException('Invalid operator used on apply.')
-        self.set_max_bits(operator)
+        self.get_bits_for_op(operator)
         operator = " " + operator + " "
         block_strings = [self.get_block_string(b) for b in blocks]
         return operator.join(block_strings)
 
-    def set_max_bits(self, op):
+    def get_bits_for_op(self, op):
         block_lengths = [len(b) for b in self.blocks]
         if op == '+':
             m = sum(block_lengths)
@@ -187,7 +192,10 @@ class Generator:
             m = functools.reduce(operator.mul, block_lengths)
         elif op == '/' or op == '-':
             m = max(block_lengths)
-        m_bits = int(math.floor(math.log(m, 2)) + 1)
+        self.set_max_bits(m)
+
+    def set_max_bits(self, max_num):
+        m_bits = int(math.floor(math.log(max_num, 2)) + 1)
         if m_bits > self.max_bits:
             self.max_bits = m_bits
 
