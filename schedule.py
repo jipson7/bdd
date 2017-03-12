@@ -51,11 +51,8 @@ class Classroom(Base):
     capacity = Column(Integer)
 
 
-def time_overlap(t1, t2):
-    return (t1.start_time <= t2.end_time and t1.start_time >= t2.start_time) \
-            or (t2.start_time <= t1.end_time and t2.start_time >= t1.start_time)
-
-sections = db.query(Section).all()
+# sections = db.query(Section).limit(2).all()
+sections = [db.query(Section).get(1)]
 
 tas = db.query(TA).all()
 
@@ -63,16 +60,22 @@ blocks = [Block(tas) for _ in sections]
 
 bdd = Generator(blocks)
 
-for i, section in enumerate(sections):
-    for ta in tas:
-        for restriction in ta.restrictions:
-            if time_overlap(restriction, section):
-                index = tas.index(ta)
-                bdd.not_equ(blocks[i], index)
+for i, s in enumerate(sections):
+    def no_overlap(ta, s=s):
+        if len(ta.restrictions) == 0:
+            return True
+        for r in ta.restrictions:
+            return not (((s.start_time <= r.end_time) and
+                        (s.start_time >= r.start_time)) and
+                        ((r.start_time <= s.end_time) and
+                        (r.start_time >= s.start_time)))
+    bdd.map(no_overlap, blocks[i])
 
 
 solutions = bdd.execute()
 
-print(solutions)
-
-# Produce all solutions: True
+for solution in solutions:
+    for section, tas in solution.items():
+        for ta in tas:
+            print(ta.ta_name)
+    # break  # remove to print all solutions
