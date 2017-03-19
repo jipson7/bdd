@@ -14,8 +14,8 @@ int num_bits_for_binary(int x) {
 
 int main() {
 
-    int node_num = 100000000;
-    int cache_size = 100000000;
+    int node_num = 10000000;
+    int cache_size = 10000000;
 
     bdd_init(node_num, cache_size);
 

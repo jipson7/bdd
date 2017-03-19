@@ -1,8 +1,8 @@
 from solver import Generator, Block
 from functools import reduce
 
-X = 4  # Number of buckets
-Y = 4  # Number of unique items
+X = 15  # Number of buckets
+Y = 15  # Number of unique items
 Z = 1  # Bucket Capacity
 
 block_matrix = []
