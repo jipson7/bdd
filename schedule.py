@@ -51,10 +51,9 @@ class Classroom(Base):
     capacity = Column(Integer)
 
 
-# sections = db.query(Section).limit(2).all()
-sections = [db.query(Section).get(1)]
+sections = db.query(Section).limit(8).all()
 
-tas = db.query(TA).all()
+tas = db.query(TA).limit(8).all()
 
 blocks = [Block(tas) for _ in sections]
 
@@ -74,8 +73,10 @@ for i, s in enumerate(sections):
 
 solutions = bdd.execute()
 
-for solution in solutions:
-    for section, tas in solution.items():
-        for ta in tas:
-            print(ta.ta_name)
-    # break  # remove to print all solutions
+# for solution in solutions:
+#     for section, tas in solution.items():
+#         for ta in tas:
+#             print(ta.ta_name)
+#     # break  # remove to print all solutions
+
+print("There are " + str(len(solutions)) + " solution(s).")
