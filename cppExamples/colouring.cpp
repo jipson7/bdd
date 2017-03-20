@@ -53,8 +53,4 @@ int main() {
     long num_solutions = (long)bdd_satcount(constraint);
 
     cout << "There are " << num_solutions << " solution(s)." << endl;
-
-
-
-
 }
