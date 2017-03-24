@@ -164,7 +164,7 @@ class Generator:
     the values for which do returns true. The do function
     must therefore return true or false.
     """
-    def map(self, do, block):
+    def filter(self, do, block):
         line = []
         block_index = self.get_block_index(block)
         block_string = tem.block.format(str(block_index))

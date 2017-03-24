@@ -68,7 +68,7 @@ for i, s in enumerate(sections):
                         (s.start_time >= r.start_time)) and
                         ((r.start_time <= s.end_time) and
                         (r.start_time >= s.start_time)))
-    bdd.map(no_overlap, blocks[i])
+    bdd.filter(no_overlap, blocks[i])
 
 
 solutions = bdd.execute()
