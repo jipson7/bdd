@@ -1,5 +1,5 @@
 from solver import Generator, Block
-from sqlalchemy import create_engine, Column, Integer
+from sqlalchemy import create_engine, Column, Integer, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -21,6 +21,16 @@ class Vertex(Base):
     __tablename__ = 'vertex'
     v = Column(Integer, primary_key=True)
 
+class Result(Base):
+    __tablename__ = 'result'
+    def __init__(self, s_id, v, color):
+        self.solution_id = s_id
+        self.v = v
+        self.color = color
+    result_id = Column(Integer, primary_key=True)
+    solution_id = Column(Integer)
+    v = Column(Integer)
+    color = Column(Text)
 
 """
 Run BDD test
@@ -37,5 +47,8 @@ for e in db.query(Edge):
 
 solutions = bdd.execute()
 
-for s in solutions:
-    print(s)
+for solution_id, solution in enumerate(solutions):
+    for v, color in solution.items():
+        db.add(Result(solution_id, v, color[0]))
+db.commit()
+
